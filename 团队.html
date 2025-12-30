@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 墨尔本商务与团建手册 (驾驶增强版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        body { background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #1e293b; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .container-max { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* Cards */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .info-card { background: white; padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .info-card.amber { border-left-color: #f59e0b; }
+        
+        .day-header { 
+            position: sticky; top: 70px; z-index: 10; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            padding: 16px 20px; margin: 30px 0 20px 0; border-radius: 12px;
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .stop-card { 
+            background: white; border-radius: 12px; padding: 24px; 
+            margin-bottom: 20px; border: 1px solid #e2e8f0; position: relative;
+            transition: transform 0.2s;
+        }
+        .stop-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #cbd5e1; }
+        
+        .h-title { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .selling-point { 
+            background: #f8fafc; color: #475569; font-style: italic; 
+            padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; 
+            font-size: 0.9rem; border-left: 3px solid #94a3b8;
+        }
+        
+        /* Badges */
+        .badge { font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+        .badge-time { background: #e0f2fe; color: #0284c7; }
+        .badge-drive { background: #f1f5f9; color: #64748b; }
+        .badge-cost { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; margin-top: 8px; display: inline-block; font-family: monospace; }
+        
+        .detail-row { display: flex; gap: 12px; font-size: 0.85rem; color: #64748b; margin-top: 8px; align-items: flex-start; }
+        .detail-icon { width: 20px; text-align: center; color: #94a3b8; flex-shrink: 0; margin-top: 2px; }
+        
+        /* Buttons */
+        .btn-group { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; border-top: 1px solid #f1f5f9; pt-4; }
+        .action-btn { 
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.8rem; font-weight: 600; color: #334155;
+            background: white; border: 1px solid #cbd5e1; 
+            padding: 6px 12px; border-radius: 6px; text-decoration: none;
+            transition: all 0.2s;
+        }
+        .action-btn:hover { background: #f8fafc; border-color: #94a3b8; color: #0f172a; }
+        .btn-primary { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+        .btn-primary:hover { background: #dbeafe; }
+        
+        .alert-block { background: #fff1f2; border: 1px solid #fecdd3; color: #9f1239; padding: 16px; border-radius: 8px; font-size: 0.9rem; margin-top: 12px; }
+        
+        /* Cost Toggle */
+        .hidden-cost .badge-cost { display: none !important; }
+        
+        .toggle-btn {
+            background: #334155; color: white; border: none; 
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; 
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            transition: background 0.2s;
+        }
+        .toggle-btn:hover { background: #1e293b; }
+
+        /* --- DRIVING MODAL & SIGNS --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; backdrop-filter: blur(4px); }
+        .drive-modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 95%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+            background: #ffffff; border-radius: 16px; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .drive-header { position: sticky; top: 0; background: #0f172a; color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #334155; }
+        .drive-body { padding: 24px; }
+        
+        .rule-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 16px; }
+        .rule-card.warning { background: #fff1f2; border-color: #fecdd3; }
+        .rule-icon { font-size: 1.8rem; min-width: 40px; text-align: center; padding-top: 2px; }
+        
+        /* CSS Traffic Signs */
+        .sign-hook { 
+            border: 2px solid #000; border-radius: 4px; width: 60px; height: 70px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: white; font-size: 9px; font-weight: 800; line-height: 1.2; text-align: center; font-family: sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 8px;
+        }
+        .sign-keep-left {
+            background: white; border: 2px solid #000; width: 60px; height: 70px; border-radius: 4px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 5px;
+            font-size: 9px; font-weight: 800; text-align: center; line-height: 1.1;
+        }
+        .sign-arrow-left {
+             width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 15px solid black; margin-top: 5px; transform: rotate(135deg);
+        }
+    </style>
+</head>
+<body class="pb-12" id="main-body">
+
+    <!-- Sticky Nav -->
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="container-max flex justify-between items-center py-3">
+            <div>
+                <h1 class="font-bold text-lg tracking-wide">MELBOURNE OPS 2026</h1>
+                <div class="flex gap-3 text-xs text-slate-400 mt-1">
+                    <span><i class="fa-solid fa-users mr-1"></i>8人</span>
+                    <span><i class="fa-solid fa-calendar mr-1"></i>1.24 - 2.04</span>
+                </div>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+                <!-- DRIVING BUTTON -->
+                <button onclick="openDriveModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-full transition shadow-sm flex items-center gap-2 animate-pulse">
+                    <i class="fa-solid fa-steering-wheel"></i> 驾驶速成
+                </button>
+                <button onclick="toggleCosts()" class="toggle-btn">
+                    <i class="fa-solid fa-eye" id="eye-icon"></i> <span id="toggle-text">隐藏费用</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-max fade-in">
+
+        <!-- 1. 仪表盘: 出行指南 -->
+        <div class="dashboard-grid">
+            <div class="info-card">
+                <h3 class="font-bold text-blue-900 mb-3"><i class="fa-solid fa-temperature-half mr-2"></i>天气与穿衣</h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li><strong>气温:</strong> 15°C - 35°C (夏季温差极大)</li>
+                    <li><strong>穿衣:</strong> T恤打底 + <strong>薄卫衣/防风外套</strong> (早晚必穿)。</li>
+                    <li><strong>防晒:</strong> 紫外线极强！请全员备好墨镜、帽子、防晒霜。</li>
+                </ul>
+            </div>
+            <div class="info-card amber">
+                <h3 class="font-bold text-amber-900 mb-3"><i class="fa-solid fa-car-side mr-2"></i>驾驶与支付</h3>
+                <ul class="text-sm text-slate-600 space-y-2">
+                    <li class="cursor-pointer hover:text-amber-600 underline font-bold" onclick="openDriveModal()">🔴 点击查看：右舵驾驶规则 (必读)</li>
+                    <li><strong>插座:</strong> 澳标 <strong>八字形三扁插头</strong> (Type I)。</li>
+                    <li><strong>支付:</strong> 99%支持刷卡(Visa/Master)。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 1.25-1.30 Summary -->
+        <div class="stop-card bg-slate-50 border-slate-200">
+            <h3 class="h-title"><i class="fa-solid fa-briefcase text-slate-500"></i> 第一阶段：商务工作周 (1.25 - 1.30)</h3>
+            <p class="text-sm text-slate-600 mb-3">住宿基地：<strong>Clayton Area</strong> (华人区，餐饮便利)</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="bg-white p-3 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800 block mb-1">1.25 (Sun) 抵达</span>
+                    <span class="text-slate-500">CA165落地 -> 提8座车 -> Clayton中餐接风。</span>
+                </div>
+                <div class="bg-white p-3 rounded border border-slate-200">
+                    <span class="font-bold text-slate-800 block mb-1">1.29 (Thu) 购物夜</span>
+                    <span class="text-slate-500">17:00 后前往 <strong>Chadstone</strong> (开到21:00)。</span>
+                </div>
+                <div class="bg-white p-3 rounded border border-slate-200 sm:col-span-2">
+                    <span class="font-bold text-slate-800 block mb-1">1.30 (Fri) 庆功宴</span>
+                    <span class="text-slate-500">16:00 工作结束。晚间前往 Southbank 享用团队庆功晚餐 (推荐 Kitchen Workshop)。</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.31 SAT -->
+        <div class="day-header">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">1.31 SAT</h2>
+                <p class="text-xs text-slate-500 font-mono">大洋路精华自驾 (无十二门徒)</p>
+            </div>
+            <span class="badge badge-drive">往返约 4h</span>
+        </div>
+
+        <!-- Stop 1 -->
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Geelong Waterfront (吉朗海滨)</h3>
+                <span class="badge badge-time">10:30 (停留1h)</span>
+            </div>
+            <div class="selling-point">“在维州第二大城的海滨，寻觅百个形态各异的彩绘木偶人，是团队合影的最佳背景。”</div>
+            <span class="badge badge-cost">💰 免费</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-car detail-icon"></i>
+                <span>距离 Clayton 约 1 小时车程 (M1高速)。</span>
+            </div>
+            <div class="detail-row">
+                <i class="fa-solid fa-circle-info detail-icon"></i>
+                <span>建议停在 Cunningham Pier 附近，步行可达主要木偶人。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/search/Geelong+Waterfront" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-location-arrow"></i> 导航</a>
+                <a href="https://m.mafengwo.cn/poi/6561571.html" target="_blank" class="action-btn"><i class="fa-regular fa-file-lines"></i> 马蜂窝攻略</a>
+            </div>
+        </div>
+
+        <!-- Stop 2 -->
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Lorne Hotel Pub (午餐)</h3>
+                <span class="badge badge-time">12:30 (停留1.5h)</span>
+            </div>
+            <div class="selling-point">“坐在悬崖之上的百年酒馆，点一份澳洲最地道的炸鱼薯条，眼前就是无尽的南太平洋。”</div>
+            <span class="badge badge-cost">💰 人均约 $35 AUD</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-utensils detail-icon"></i>
+                <span>推荐：Fish & Chips, Chicken Parma (澳洲特色炸鸡排)。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.tripadvisor.com/Restaurant_Review-g552200-d1753982-Reviews-Lorne_Hotel_Bistro-Lorne_Victoria.html" target="_blank" class="action-btn"><i class="fa-regular fa-eye"></i> 真实评价</a>
+            </div>
+        </div>
+
+        <!-- Stop 3 -->
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Teddy's Lookout (泰迪观景台)</h3>
+                <span class="badge badge-time">14:30 (停留0.5h)</span>
+            </div>
+            <div class="selling-point">“无需无人机，也能拥有上帝视角。俯瞰大洋路最美发卡弯，这是无数明信片的诞生地。”</div>
+            <span class="badge badge-cost">💰 免费</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-route detail-icon"></i>
+                <span>从 Lorne 主街开车上山仅需 5 分钟 (路陡，注意驾驶)。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/search/Teddy's+Lookout" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-location-arrow"></i> 导航</a>
+            </div>
+        </div>
+
+        <!-- 2.01 SUN -->
+        <div class="day-header">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">2.01 SUN</h2>
+                <p class="text-xs text-slate-500 font-mono">澳网决赛日 & 动物园</p>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Healesville Sanctuary</h3>
+                <span class="badge badge-time">09:30 (停留3h)</span>
+            </div>
+            <div class="selling-point">“不仅仅是动物园，更是森林深处的本土动物避难所。必看：鸭嘴兽馆、考拉近距离接触。”</div>
+            <span class="badge badge-cost">💰 门票约 $46 AUD</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-clock detail-icon"></i>
+                <span>12:00 有“天空之灵”猛禽飞行表演，非常震撼，不要错过。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.zoo.org.au/healesville" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-ticket"></i> 官网购票</a>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Melbourne Park (AO26 Ground Pass)</h3>
+                <span class="badge badge-time">15:00 - 晚间</span>
+            </div>
+            <div class="selling-point">“置身蓝色硬地场外的草坪派对，与数万名球迷共同见证大满贯冠军时刻的狂热氛围。”</div>
+            <span class="badge badge-cost">💰 外场票约 $29 AUD</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-lightbulb detail-icon"></i>
+                <span>建议在 Garden Square 草坪占座看大屏直播。不可自带酒水。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.ticketmaster.com.au/" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-ticket"></i> Ticketmaster</a>
+                <a href="https://www.google.com/maps/search/Melbourne+Park" target="_blank" class="action-btn"><i class="fa-solid fa-location-arrow"></i> 导航</a>
+            </div>
+        </div>
+
+        <!-- 2.02 MON -->
+        <div class="day-header">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">2.02 MON</h2>
+                <p class="text-xs text-slate-500 font-mono">莫宁顿半岛 (无温泉)</p>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Arthur's Seat Eagle (缆车)</h3>
+                <span class="badge badge-time">11:30 (停留1h)</span>
+            </div>
+            <div class="selling-point">“乘坐瑞士制造的缆车，像老鹰一样翱翔在菲利普湾的碧蓝之上，俯瞰整个半岛。”</div>
+            <span class="badge badge-cost">💰 往返约 $34 AUD</span>
+            <div class="btn-group">
+                <a href="https://aseagle.com.au/" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-ticket"></i> 预订</a>
+                <a href="https://m.ctrip.com/webapp/you/sight/mornington-peninsula-1949/1865203.html" target="_blank" class="action-btn"><i class="fa-regular fa-file-lines"></i> 携程攻略</a>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Sorrento & Portsea</h3>
+                <span class="badge badge-time">13:00 (停留3h)</span>
+            </div>
+            <div class="selling-point">“先在Sorrento吃一块著名的香草蛋糕，再去半岛最尖端(London Bridge)直面南大洋的巨浪。”</div>
+            <span class="badge badge-cost">💰 免费 (午餐另计)</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-route detail-icon"></i>
+                <span>从 Sorrento 开车到 Portsea Back Beach 仅需 10 分钟。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/search/London+Bridge+Lookout+Portsea" target="_blank" class="action-btn"><i class="fa-solid fa-location-arrow"></i> 导航伦敦桥</a>
+            </div>
+        </div>
+
+        <!-- 2.03 TUE -->
+        <div class="day-header">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">2.03 TUE</h2>
+                <p class="text-xs text-slate-500 font-mono">维妈市场 & 古老拱廊</p>
+            </div>
+            <span class="badge badge-drive">火车/Uber出行</span>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Queen Victoria Market</h3>
+                <span class="badge badge-time">10:00 - 12:30</span>
+            </div>
+            <div class="selling-point">“墨尔本的城市厨房。这里是买伴手礼(UGG/蜂蜜/T恤)性价比最高的地方，还能吃到热腾腾的果酱甜甜圈。”</div>
+            <span class="badge badge-cost">💰 丰俭由人</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-train detail-icon"></i>
+                <span>建议从 Clayton 坐火车直达市中心，避免停车难。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://qvm.com.au/" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-globe"></i> 官网</a>
+                <a href="https://m.mafengwo.cn/poi/6561571.html" target="_blank" class="action-btn"><i class="fa-regular fa-comment-dots"></i> 必买攻略</a>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Royal Arcade & Block Arcade</h3>
+                <span class="badge badge-time">14:00 - 15:30</span>
+            </div>
+            <div class="selling-point">“穿越回19世纪的流金岁月，在马赛克地砖和玻璃穹顶下漫步，避开语言门槛，纯享视觉之美。”</div>
+            <span class="badge badge-cost">💰 免费</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-coffee detail-icon"></i>
+                <span>推荐：在 Hopetoun Tea Rooms 橱窗前拍照，去 Koko Black 喝热巧。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/search/Royal+Arcade+Melbourne" target="_blank" class="action-btn"><i class="fa-solid fa-location-arrow"></i> 导航</a>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">唐人街自由晚餐 (Farewell)</h3>
+                <span class="badge badge-time">18:00</span>
+            </div>
+            <div class="selling-point">“告别宴不搞形式主义。在Chinatown自由享用家乡味（推荐食为先/天府），随后去 Chemist Warehouse 补齐最后的保健品清单。”</div>
+            <div class="detail-row">
+                <i class="fa-solid fa-coins detail-icon"></i>
+                <span class="badge badge-cost">预估 $50 AUD/人</span>
+            </div>
+        </div>
+
+        <!-- 2.04 WED -->
+        <div class="day-header">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">2.04 WED</h2>
+                <p class="text-xs text-slate-500 font-mono">最后一日 & 回程</p>
+            </div>
+            <span class="badge badge-time bg-amber-100 text-amber-800">CA166 20:15 起飞</span>
+        </div>
+
+        <!-- 交通警报 -->
+        <div class="alert-block">
+            <h4 class="font-bold mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i>重要：交通与分流安排</h4>
+            <ul class="list-disc list-inside space-y-1">
+                <li><strong>07:00</strong> 领队(唯一司机) 需驾车前往机场还车，飞往新西兰。</li>
+                <li><strong>08:30</strong> 团队(6人) 退房。此时<strong>无车</strong>。</li>
+                <li><strong>行动建议:</strong> 团队需使用 Uber 或 Maxi Taxi (大出租车) 行动。费用已预估在下方。</li>
+            </ul>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">Brighton Bathing Boxes</h3>
+                <span class="badge badge-time">09:30 (停留1h)</span>
+            </div>
+            <div class="selling-point">“82个色彩斑斓的梦，整齐排列在沙滩上。早上去光线最柔和，人也最少。”</div>
+            <span class="badge badge-cost">💰 打车约 $40 AUD</span>
+            <div class="detail-row">
+                <i class="fa-solid fa-taxi detail-icon"></i>
+                <span>团队建议直接打车前往，游玩后打车去St Kilda。</span>
+            </div>
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/search/Brighton+Bathing+Boxes" target="_blank" class="action-btn btn-primary"><i class="fa-solid fa-location-arrow"></i> 导航</a>
+            </div>
+        </div>
+
+        <div class="stop-card">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="h-title">St Kilda & Luna Park</h3>
+                <span class="badge badge-time">11:30 - 14:00</span>
+            </div>
+            <div class="selling-point">“在月亮公园的巨大笑脸前打卡，漫步百年栈桥，看一眼CBD的远景天际线。”</div>
+            <div class="detail-row">
+                <i class="fa-solid fa-taxi detail-icon"></i>
+                <span>从 Brighton 打车过来约 15 分钟。</span>
+            </div>
+        </div>
+
+        <div class="stop-card bg-slate-50 border-slate-300">
+            <h3 class="h-title text-slate-800">17:00 机场集合 & TRS退税</h3>
+            <div class="detail-row">
+                <i class="fa-solid fa-check detail-icon"></i>
+                <span>提前下载 <strong>TRS APP</strong> 填好发票信息，生成二维码，可走快速通道。</span>
+            </div>
+            <div class="detail-row">
+                <i class="fa-solid fa-check detail-icon"></i>
+                <span>液体/保健品若需退税，请在<strong>安检外 (Landside) ABF办公室</strong> 先盖章，再托运。</span>
+            </div>
+            <div class="mt-4 text-center">
+                <span class="text-lg font-bold text-amber-600">CA166 20:15 起飞 -> 平安回国</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Driving Rules Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeDriveModal()"></div>
+    <div class="drive-modal" id="drive-modal">
+        <div class="drive-header">
+            <h2 class="text-lg font-bold"><i class="fa-solid fa-steering-wheel mr-2"></i>墨尔本驾驶速成</h2>
+            <button onclick="closeDriveModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="drive-body">
+            <!-- Rule 1 -->
+            <div class="rule-card border-l-4 border-l-red-500">
+                <div class="rule-icon text-red-500"><i class="fa-solid fa-left-long"></i></div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">时刻靠左 (KEEP LEFT)</h3>
+                    <p class="text-xs text-slate-600">最高优先级！无论转弯还是直行，默念“司机永远在马路中线一侧”。</p>
+                </div>
+            </div>
+            <!-- Rule 2 -->
+            <div class="rule-card border-l-4 border-l-blue-500">
+                <div class="rule-icon text-blue-500"><i class="fa-solid fa-wind"></i></div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">雨刮器 vs 转向灯</h3>
+                    <p class="text-xs text-slate-600">澳洲车通常<strong>右手打灯，左手雨刮</strong>。如果晴天雨刮乱动，别慌，新手认证。</p>
+                </div>
+            </div>
+            <!-- Rule 3 -->
+            <div class="rule-card border-l-4 border-l-amber-500">
+                <div class="rule-icon text-amber-500"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm">环岛让右 (Give Way Right)</h3>
+                    <p class="text-xs text-slate-600">进入环岛前，必须停下让<strong>右侧</strong>已经在环岛里的车先行。</p>
+                </div>
+            </div>
+            <!-- Rule 4 (CSS Sign) -->
+            <div class="rule-card border-l-4 border-l-purple-500">
+                <div class="rule-icon text-purple-500"><i class="fa-solid fa-arrow-turn-up"></i></div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800 text-sm">勾形转弯 (Hook Turn)</h3>
+                    <div class="flex gap-3 mt-1 items-center">
+                        <div class="sign-hook">
+                            <div>RIGHT</div><div>TURN</div><div>FROM</div><div>LEFT</div>
+                        </div>
+                        <p class="text-xs text-slate-600">市区看到此标想右转：<br>1. 靠<strong>最左</strong>车道。<br>2. 直行至路口中间停下。<br>3. 等横向绿灯亮起再右转。</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeDriveModal()" class="w-full bg-slate-800 text-white py-3 rounded-lg font-bold mt-4 text-sm">我已了解，安全出发</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleCosts() {
+            document.body.classList.toggle('hidden-cost');
+            const btn = document.getElementById('toggle-text');
+            if (document.body.classList.contains('hidden-cost')) {
+                btn.innerText = "显示费用";
+            } else {
+                btn.innerText = "隐藏费用";
+            }
+        }
+
+        function openDriveModal() {
+            document.getElementById('drive-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDriveModal() {
+            document.getElementById('drive-modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
